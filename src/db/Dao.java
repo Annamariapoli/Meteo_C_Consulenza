@@ -8,11 +8,13 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
+import bean.CoppieDate;
+import bean.IeriOggi;
 import bean.Situazione;
 
 public class Dao {
 	
-	public List<String> getCitta(){
+	public List<String> getCitta(){             //x la combo
 		String query="select distinct s.Localita   from situazione s";
 		Connection conn = DBConnect.getConnection();
 		List<String> citta = new LinkedList<>();
@@ -30,73 +32,56 @@ public class Dao {
 		}
 	}
 
-	
-
-	
-	public List<Situazione> getAllSituazioniOrdinate (String citta){
-		String query="select *  from situazione s  where s.Localita=?  order by s.`Data` asc";
+	// x grafo
+	public List<IeriOggi> getCoppie(String localita){
+		String query="select distinct ieri.`Data` as ieri , ieri.Tmax as ieri_t  ,oggi.`Data` as oggi, oggi.Tmax as oggi_t "
+				+ " from situazione oggi, situazione ieri   "
+				+ "where oggi.`Data`<> ieri.`Data`   "
+				+ "and oggi.Localita=ieri.Localita and oggi.Localita=?   "
+				+ "and DATEDIFF(oggi.`Data`, ieri.`Data`)= 1";
+		List<IeriOggi> elenco = new LinkedList<>();
 		Connection conn = DBConnect.getConnection();
-		List<Situazione> sit = new LinkedList<>();
 		try{
 			PreparedStatement st = conn.prepareStatement(query);
-			st.setString(1,  citta);
-			ResultSet rs = st.executeQuery();
-			while(rs.next()){
-				Situazione s = new Situazione (rs.getString("Localita"),
-						rs.getDate("Data").toLocalDate(), rs.getInt("Tmedia"),
-						rs.getInt("Tmin"), rs.getInt("Tmax"),
-						rs.getInt("Puntorugiada"), rs.getInt("Umidita"),
-						rs.getInt("Visibilita"), rs.getInt("Ventomedia"),
-						rs.getInt("Ventomax"), rs.getInt("Raffica"),
-						rs.getInt("Pressioneslm"), rs.getInt("Pressionemedia"),
-						rs.getInt("Pioggia"), rs.getString("Fenomeni"));
-				sit.add(s);
+			st.setString(1,  localita);
+			ResultSet res = st.executeQuery();
+			while(res.next()){
+				IeriOggi e = new IeriOggi(res.getDate("ieri").toLocalDate(), res.getInt("ieri_t"), res.getDate("oggi").toLocalDate(), res.getInt("oggi_t"));
+				elenco.add(e);
 			}
 			conn.close();
-			return sit;
+			return elenco;
 		}catch(SQLException e ){
 			e.printStackTrace();
 			return null;
 		}
+		
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//tmax di oggi e t max di ieri:
-	
-	//select distinct  oggi.Tmin, ieri.Tmax
-   //from situazione oggi, situazione ieri
-  //where oggi.Localita='torino' and ieri.Localita='torino' 
- //	and datediff(oggi.`Data`, ieri.`Data`)=1;
-	
-	//tutte le date di quella citta:
- 
-	public List<LocalDate> tutteLedateDiQuellaCitta(String city){
-		String query="select distinct s.`Data`   from situazione s   where s.Localita=?  order by s.`Data` asc";
+	//x primo 
+	public List<CoppieDate> getCoppieDate(String localita){
+		String query="select distinct ieri.`Data` as ieri , ieri.Tmax as ieri_t  ,oggi.`Data` as oggi, oggi.Tmax as oggi_t  "
+				+ "from situazione oggi, situazione ieri  "
+				+ "where  oggi.Localita=ieri.Localita and oggi.Localita=?  "
+				+ "and DATEDIFF(oggi.`Data`, ieri.`Data`)= 1  "
+				+ "and ieri.Tmax<= oggi.Tmax+2";
 		Connection conn = DBConnect.getConnection();
-		List<LocalDate> date = new LinkedList<>();
 		try{
 			PreparedStatement st = conn.prepareStatement(query);
-			st.setString(1,  city);
+			List<CoppieDate> coppieDate = new LinkedList<>();
+			st.setString(1,  localita);
 			ResultSet res = st.executeQuery();
 			while(res.next()){
-				date.add(res.getDate("data").toLocalDate());
+				CoppieDate e = new CoppieDate (res.getDate("ieri").toLocalDate(), res.getDate("oggi").toLocalDate());
+				coppieDate.add(e);
 			}
 			conn.close();
-			return date;
+			return coppieDate;
 		}catch(SQLException e ){
 			e.printStackTrace();
 			return null;
 		}
+		
 	}
 }

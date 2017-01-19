@@ -1,7 +1,10 @@
 package application;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import bean.CoppieDate;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -50,6 +53,10 @@ public class SampleController {
     		return;
     	}
 
+    	List<CoppieDate> coppieDate = m.getCoppieDate(citta);
+    	for(CoppieDate e : coppieDate){
+    		txtResult.appendText(e +" \n");
+    	}
     }
 
     @FXML
