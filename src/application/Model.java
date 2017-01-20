@@ -22,26 +22,16 @@ public class Model {
 		return citta;
 	}
 	
-	
 	public List<IeriOggi> getElenco(String localita){
 		List<IeriOggi> elenco = dao.getCoppie(localita);
 		return elenco;
 	}
 	
-	
-	
 	public List<CoppieDate> getCoppieDate(String localita){
 		List<CoppieDate> coppieDate = dao.getCoppieDate(localita);
 		return coppieDate;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	public List<LocalDate> getVertici(String localita){
 		List<LocalDate> vertici = new LinkedList<>();
 		List<IeriOggi> elenco = getElenco(localita);
@@ -56,10 +46,6 @@ public class Model {
 		System.out.println(vertici.toString());
 		return vertici;
 	}
-	
-	
-	
-	
 	
 	//il grafo non serve
 	//ho come vertici le date di quella citta
@@ -84,28 +70,7 @@ public class Model {
 		//m.getVertici("torino");
 		m.buildGraph("torino");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+			
 //	public List<LocalDate> getVerticiDate(String city){
 //		List<LocalDate> all= dao.tutteLedateDiQuellaCitta(city);
 //		return all;
@@ -138,15 +103,10 @@ public class Model {
 //			}
 //		System.out.println(grafo.toString());
 //	}
-//	
-//	
-//	
-//	
+
 //	public static void main(String [] args){
 //		Model m = new Model();
 //			m.buildGraph("Torino");
 //	}
-//	
-//	
-	
+
 }
