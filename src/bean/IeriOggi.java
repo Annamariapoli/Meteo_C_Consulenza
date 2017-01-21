@@ -8,6 +8,8 @@ public class IeriOggi {
 	private int ieri_t;
 	private LocalDate oggi;
 	private int oggi_t;
+	
+	
 	public IeriOggi(LocalDate ieri, int ieri_t, LocalDate oggi, int oggi_t) {
 		super();
 		this.ieri = ieri;
